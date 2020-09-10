@@ -1,0 +1,74 @@
+{
+    "$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+    "contentVersion": "1.0.0.0",
+    "parameters": {
+        "virtualMachines_vnet1_name": {
+            "defaultValue": "vm1",
+            "type": "String"
+        },
+        "disks_vnet1_disk1_97d1eb80de2642d7b795e3a2129d6e14_externalid": {
+            "defaultValue": "/subscriptions/e3ed1fb4-2623-49ff-94d4-d7d4c7208318/resourceGroups/RG1/providers/Microsoft.Compute/disks/vnet1_disk1_97d1eb80de2642d7b795e3a2129d6e14",
+            "type": "String"
+        },
+        "networkInterfaces_vnet1105_externalid": {
+            "defaultValue": "/subscriptions/e3ed1fb4-2623-49ff-94d4-d7d4c7208318/resourceGroups/RG1/providers/Microsoft.Network/networkInterfaces/vm11105",
+            "type": "String"
+        }
+    },
+    "variables": {},
+    "resources": [
+        {
+            "type": "Microsoft.Compute/virtualMachines",
+            "apiVersion": "2019-07-01",
+            "name": "[parameters('virtualMachines_vnet1_name')]",
+            "location": "eastus",
+            "properties": {
+                "hardwareProfile": {
+                    "vmSize": "Standard_B1s"
+                },
+                "storageProfile": {
+                    "imageReference": {
+                        "publisher": "MicrosoftWindowsServer",
+                        "offer": "WindowsServer",
+                        "sku": "2016-Datacenter",
+                        "version": "latest"
+                    },
+                    "osDisk": {
+                        "osType": "Windows",
+                        "name": "[concat(parameters('virtualMachines_vnet1_name'), '_disk1_97d1eb80de2642d7b795e3a2129d6e14')]",
+                        "createOption": "FromImage",
+                        "caching": "ReadWrite",
+                        "managedDisk": {
+                            "id": "[parameters('disks_vnet1_disk1_97d1eb80de2642d7b795e3a2129d6e14_externalid')]"
+                        }
+                    },
+                    "dataDisks": []
+                },
+                "osProfile": {
+                    "computerName": "[parameters('virtualMachines_vnet1_name')]",
+                    "adminUsername": "sachinadmin",
+                    "windowsConfiguration": {
+                        "provisionVMAgent": true,
+                        "enableAutomaticUpdates": true
+                    },
+                    "secrets": [],
+                    "allowExtensionOperations": true,
+                    "requireGuestProvisionSignal": true
+                },
+                "networkProfile": {
+                    "networkInterfaces": [
+                        {
+                            "id": "[parameters('networkInterfaces_vnet1105_externalid')]"
+                        }
+                    ]
+                },
+                "diagnosticsProfile": {
+                    "bootDiagnostics": {
+                        "enabled": true,
+                        "storageUri": "https://rg1diag404.blob.core.windows.net/"
+                    }
+                }
+            }
+        }
+    ]
+}
